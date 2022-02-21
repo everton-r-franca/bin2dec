@@ -23,7 +23,9 @@ export default class Input extends Component {
                onChange={(event) => this.whenUserChangeInput(event)}
                autofocus="true"
             ></textarea>
-            <div className="info mt-4">{this.state.infoValue}</div>
+            <div className="info mt-4 text-muted">
+               <small>{this.state.infoValue}</small>
+            </div>
             <div className="binaries">{this.state.binaries}</div>
          </Fragment>
       );
@@ -40,7 +42,7 @@ export default class Input extends Component {
       });
       const invalidCharsRemoved = this.removeInvalidChars(inputUser);
       if (invalidCharsRemoved !== inputUser)
-         this.msgInfo("Entradas inválidas foram filtradas.");
+         this.msgInfo("Algumas entradas inválidas foram filtradas.");
       this.setState({
          inputValue: invalidCharsRemoved,
       });
