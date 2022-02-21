@@ -1,9 +1,10 @@
 import { Component, Fragment } from "react";
+import Tags from "../tags/Tags";
 
 export default class Input extends Component {
    constructor(props) {
       super(props);
-      this.state = { inputValue: "", infoValue: "" };
+      this.state = { inputValue: "", infoValue: "", binaries: "" };
    }
 
    render() {
@@ -12,24 +13,71 @@ export default class Input extends Component {
             <input
                type="text"
                value={this.state.inputValue}
-               onChange={(event) => this.validInputValue(event)}
+               onChange={(event) => this.whenUserChangeInput(event)}
             />
-            <div className="info">{this.state.infoValue}</div>
+            <div className="entradas-normais">{this.state.infoValue}</div>
+            <div className="binaries">{this.state.binaries}</div>
          </Fragment>
       );
    }
-   validInputValue(event) {
-      if (event.target.value !== "") {
-         const lastInsertedChar = parseInt(event.target.value.slice(-1));
-         console.log(lastInsertedChar);
-         const binary = event.target.value;
-         if (lastInsertedChar === 0 || lastInsertedChar === 1) {
-            this.setState({ inputValue: binary, infoValue: "" });
-         } else {
-            this.setState({ infoValue: "Cuidado !!! Apenas 0 e 1" });
-         }
-      } else {
-         this.setState({ inputValue: "" });
+   whenUserChangeInput(event) {
+      const inputUser = event.target.value;
+      this.filterInput(inputUser);
+   }
+
+   filterInput(inputUser) {
+      const array = [];
+      this.setState({
+         inputValue: inputUser,
+      });
+      const invalidCharsRemoved = this.removeInvalidChars(inputUser);
+      if (invalidCharsRemoved !== inputUser)
+         this.msgInfo("Entradas inválidas foram filtradas.");
+      this.setState({
+         inputValue: invalidCharsRemoved,
+      });
+      const binaryGroup = this.binaryGroup(invalidCharsRemoved);
+      const binaryGroupNoZeroLeft = this.removeLeftZeros(binaryGroup);
+      const uniqueBinaries = this.removeDuplicates(binaryGroupNoZeroLeft);
+
+      const final = this.groupOneByte(uniqueBinaries);
+
+      final.map((e) => e.map((f) => (f !== "" ? array.push(f) : "")));
+
+      console.log(array);
+
+      this.printTags(this.removeDuplicates(this.removeLeftZeros(array)));
+   }
+
+   removeInvalidChars(inputUser) {
+      return inputUser.replace(/[^01,.; ]/g, "");
+   }
+   binaryGroup(inputUser) {
+      return inputUser.split(/[,.; ]{1,2}/g);
+   }
+   removeLeftZeros(inputUser) {
+      return inputUser.map((e) => e.replace(/^0+/, ""));
+   }
+   removeDuplicates(inputUser) {
+      return inputUser.filter((c, index) => {
+         return inputUser.indexOf(c) === index;
+      });
+   }
+   groupOneByte(inputUser) {
+      return inputUser.map((e) => {
+         return e.match(/[01]{0,8}/g);
+      });
+   }
+   msgInfo(msg) {
+      this.setState({
+         infoValue: msg,
+      });
+   }
+   printTags(binaries) {
+      if (binaries) {
+         this.setState({
+            binaries: binaries.map((e) => (e ? <Tags text={e} key={e} /> : "")),
+         });
       }
    }
 }

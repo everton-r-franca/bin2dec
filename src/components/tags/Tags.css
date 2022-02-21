@@ -1,0 +1,7 @@
+span.tag {
+   display: inline-block;
+   background-color: aqua;
+   margin-right: 15px;
+   padding: 5px;
+   border-radius: 5px;
+}
