@@ -1,4 +1,6 @@
 import { Component, Fragment } from "react";
+import "./Input.css";
+import bin2dec from "../bin2dec";
 import Tags from "../tags/Tags";
 
 export default class Input extends Component {
@@ -10,12 +12,18 @@ export default class Input extends Component {
    render() {
       return (
          <Fragment>
-            <input
+            <p className="lead">Bin2dec</p>
+            <p>
+               Conversor de bniário para decimal. Para separar os conteúdos use
+            </p>
+            <textarea
                type="text"
+               className="input form-control"
                value={this.state.inputValue}
                onChange={(event) => this.whenUserChangeInput(event)}
-            />
-            <div className="entradas-normais">{this.state.infoValue}</div>
+               autofocus="true"
+            ></textarea>
+            <div className="info mt-4">{this.state.infoValue}</div>
             <div className="binaries">{this.state.binaries}</div>
          </Fragment>
       );
@@ -76,7 +84,9 @@ export default class Input extends Component {
    printTags(binaries) {
       if (binaries) {
          this.setState({
-            binaries: binaries.map((e) => (e ? <Tags text={e} key={e} /> : "")),
+            binaries: binaries.map((e) =>
+               e ? <Tags text={e} key={e} value={bin2dec(e)} /> : ""
+            ),
          });
       }
    }
